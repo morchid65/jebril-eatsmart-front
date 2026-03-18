@@ -1,4 +1,7 @@
+ 
+
 import './style.css';
+
 
 interface Article {
   id_article: number;
@@ -46,3 +49,5 @@ function render(liste: Article[]) {
 }
 
 chargerArticles();
+
+ 
