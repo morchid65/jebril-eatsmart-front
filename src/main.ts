@@ -1,44 +1,59 @@
 import './style.css'
 
-// Définition des données (Besoin n°1)
-interface Plat {
-  id: number;
+// Interface correspondant à la structure de la base de données
+interface Article {
+  id_article: number;
   nom: string;
-  prix: number;
+  prix: string; // Le JSON renvoie souvent le DECIMAL en string
   description: string;
-  disponible: boolean;
 }
 
-const plats: Plat[] = [
-  { id: 1, nom: "Pizza Margherita", prix: 10.50, description: "Tomate, mozza, basilic", disponible: true },
-  { id: 2, nom: "Pizza Reine", prix: 12.00, description: "Jambon, champignons", disponible: true },
-  { id: 3, nom: "Pizza 4 Fromages", prix: 14.50, description: "Chèvre, reblochon, gorgonzola", disponible: false }
-];
-
-// BESOIN N°1 : Affichage en console sous forme de tableau
-console.log("--- EatSmart V1 : Données Hardcodées ---");
-console.table(plats);
-
-// BESOIN N°2 & 3 : Organisation de la page et présentation visuelle
 const app = document.querySelector<HTMLDivElement>('#app');
 
-if (app) {
-  app.innerHTML = `
-    <header>
-      <h1>EatSmart - Carte du Restaurant</h1>
-    </header>
-    <main class="menu-container">
-      ${plats.map(plat => `
-        <div class="card">
-          <h2>${plat.nom}</h2>
-          <p>${plat.description}</p>
-          <p><strong>Prix : ${plat.prix.toFixed(2)} €</strong></p>
-          ${plat.disponible 
-            ? `<button class="btn-order">Commander</button>` 
-            : `<span class="sold-out">Victime de son succès</span>`
-          }
-        </div>
-      `).join('')}
-    </main>
-  `;
+/**
+ * Fonction principale pour récupérer et afficher les articles depuis l'API
+ */
+async function chargerArticles() {
+  try {
+    // Appel à l'API PHP via le VirtualHost (Besoin n°1)
+    const response = await fetch('http://eatsmart-back.local/index.php?page=articles');
+    
+    if (!response.ok) {
+      throw new Error("Erreur lors de la récupération des données");
+    }
+
+    const articles: Article[] = await response.json();
+
+    // BESOIN N°1 : Affichage des données brutes en console pour validation client
+    console.log("--- EatSmart V2 : Données reçues de l'API ---");
+    console.table(articles);
+
+    // BESOIN N°2 : Rendre la carte autonome (Affichage dynamique de TOUS les articles)
+    if (app) {
+      app.innerHTML = `
+        <header>
+          <h1>EatSmart - Carte du Restaurant</h1>
+        </header>
+        <main class="menu-container">
+          ${articles.map(article => `
+            <div class="card">
+              <h2>${article.nom}</h2>
+              <p>${article.description}</p>
+              <p><strong>Prix : ${parseFloat(article.prix).toFixed(2)} €</strong></p>
+              <button class="btn-order">Commander</button>
+            </div>
+          `).join('')}
+        </main>
+      `;
+    }
+
+  } catch (error) {
+    console.error("Erreur technique :", error);
+    if (app) {
+      app.innerHTML = `<h1>Erreur de connexion à l'API</h1><p>Vérifiez que Wamp et le VirtualHost sont actifs.</p>`;
+    }
+  }
 }
+
+// Lancement du chargement au démarrage de la page
+chargerArticles();
