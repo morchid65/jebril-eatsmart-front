@@ -1,27 +1,60 @@
-:root {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-}
+/* src/style.css */
 
-h1 {
+/* Besoin n°3 : Organisation globale */
+#app { 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  max-width: 1000px; 
+  margin: auto; 
   text-align: center;
-  color: #d32f2f; /* Rouge "Pizza" */
 }
 
-.menu-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+header {
   padding: 20px;
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 20px;
 }
 
-.pizza-card {
-  background: white;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  border-left: 5px solid #d32f2f;
+/* Besoin n°2 : Les cartes et la grille */
+.menu-container { 
+  display: flex; 
+  gap: 20px; 
+  flex-wrap: wrap; 
+  justify-content: center; /* Pour centrer les cartes */
+  padding: 20px; 
 }
 
-.pizza-card h2 { margin-top: 0; }
-.pizza-card strong { color: #2e7d32; font-size: 1.2rem; }
+.card { 
+  border: 1px solid #ddd; 
+  padding: 15px; 
+  border-radius: 10px; /* Bordures arrondies exigées */
+  width: 250px; 
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.02); /* Petit effet bonus pour le client */
+}
+
+/* Styles des éléments internes */
+.btn-order { 
+  background-color: #27ae60; 
+  color: white; 
+  border: none; 
+  padding: 10px 20px; 
+  border-radius: 5px; 
+  cursor: pointer; 
+  font-weight: bold;
+}
+
+.btn-order:hover {
+  background-color: #219150;
+}
+
+.sold-out { 
+  color: #e74c3c; 
+  font-weight: bold; 
+  display: block;
+  margin-top: 10px;
+}

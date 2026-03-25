@@ -1,23 +1,44 @@
-// --- VERSION 1 : AFFICHAGE STATIQUE ---
-const app = document.querySelector<HTMLDivElement>('#app');
+import './style.css'
 
-const catalogueV1 = [
-  { id_article: 1, nom: "Pizza Margherita", prix: "10.00", description: "Tomate, mozza, basilic frais" },
-  { id_article: 2, nom: "Pizza Reine", prix: "12.50", description: "Tomate, mozza, jambon, champignons" },
-  { id_article: 3, nom: "Pizza 4 Fromages", prix: "14.00", description: "Tomate, mozza, chèvre, reblochon, gorgonzola" }
+// Définition des données (Besoin n°1)
+interface Plat {
+  id: number;
+  nom: string;
+  prix: number;
+  description: string;
+  disponible: boolean;
+}
+
+const plats: Plat[] = [
+  { id: 1, nom: "Pizza Margherita", prix: 10.50, description: "Tomate, mozza, basilic", disponible: true },
+  { id: 2, nom: "Pizza Reine", prix: 12.00, description: "Jambon, champignons", disponible: true },
+  { id: 3, nom: "Pizza 4 Fromages", prix: 14.50, description: "Chèvre, reblochon, gorgonzola", disponible: false }
 ];
+
+// BESOIN N°1 : Affichage en console sous forme de tableau
+console.log("--- EatSmart V1 : Données Hardcodées ---");
+console.table(plats);
+
+// BESOIN N°2 & 3 : Organisation de la page et présentation visuelle
+const app = document.querySelector<HTMLDivElement>('#app');
 
 if (app) {
   app.innerHTML = `
-    <h1>EatSmart - V1 (Maquette Statique)</h1>
-    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-      ${catalogueV1.map(item => `
-        <div style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; width: 200px;">
-          <h2>${item.nom}</h2>
-          <p>${item.description}</p>
-          <p><strong>${item.prix} €</strong></p>
+    <header>
+      <h1>EatSmart - Carte du Restaurant</h1>
+    </header>
+    <main class="menu-container">
+      ${plats.map(plat => `
+        <div class="card">
+          <h2>${plat.nom}</h2>
+          <p>${plat.description}</p>
+          <p><strong>Prix : ${plat.prix.toFixed(2)} €</strong></p>
+          ${plat.disponible 
+            ? `<button class="btn-order">Commander</button>` 
+            : `<span class="sold-out">Victime de son succès</span>`
+          }
         </div>
       `).join('')}
-    </div>
+    </main>
   `;
 }
