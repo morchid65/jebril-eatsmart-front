@@ -1,60 +1,15 @@
-/* src/style.css */
+#app { font-family: sans-serif; max-width: 1200px; margin: auto; }
+header { text-align: center; padding: 20px; }
 
-/* Besoin n°3 : Organisation globale */
-#app { 
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-  max-width: 1000px; 
-  margin: auto; 
-  text-align: center;
-}
+/* Besoin n°5 : Le wrapper pour mettre le panier à droite */
+.content-wrapper { display: flex; gap: 20px; align-items: flex-start; }
 
-header {
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-bottom: 2px solid #eee;
-  margin-bottom: 20px;
-}
+.menu-container { display: flex; gap: 20px; flex-wrap: wrap; flex: 3; }
 
-/* Besoin n°2 : Les cartes et la grille */
-.menu-container { 
-  display: flex; 
-  gap: 20px; 
-  flex-wrap: wrap; 
-  justify-content: center; /* Pour centrer les cartes */
-  padding: 20px; 
-}
+.card { border: 1px solid #ddd; padding: 15px; border-radius: 10px; width: 200px; }
 
-.card { 
-  border: 1px solid #ddd; 
-  padding: 15px; 
-  border-radius: 10px; /* Bordures arrondies exigées */
-  width: 250px; 
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
-}
+/* Styles du Panier (Aside) */
+.cart-container { flex: 1; border-left: 2px solid #eee; padding-left: 20px; background: #f9f9f9; padding: 15px; border-radius: 10px; }
+.cart-total { margin-top: 10px; font-size: 1.2em; color: #27ae60; }
 
-.card:hover {
-  transform: scale(1.02); /* Petit effet bonus pour le client */
-}
-
-/* Styles des éléments internes */
-.btn-order { 
-  background-color: #27ae60; 
-  color: white; 
-  border: none; 
-  padding: 10px 20px; 
-  border-radius: 5px; 
-  cursor: pointer; 
-  font-weight: bold;
-}
-
-.btn-order:hover {
-  background-color: #219150;
-}
-
-.sold-out { 
-  color: #e74c3c; 
-  font-weight: bold; 
-  display: block;
-  margin-top: 10px;
-}
+.btn-order { background-color: #27ae60; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; width: 100%; }
