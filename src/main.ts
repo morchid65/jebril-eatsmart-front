@@ -1,10 +1,9 @@
 import './style.css'
 
-// 1. Interface alignée sur ton dump SQL
 interface Article {
   id_article: number;
   nom: string;
-  prix: string; // decimal(19,4) arrive souvent en string via JSON
+  prix: string;
   description: string;
   id_categorie: number;
 }
@@ -12,16 +11,18 @@ interface Article {
 let panier: Article[] = [];
 const appDiv = document.querySelector<HTMLDivElement>('#app');
 
+// --- Centralisation des URLs (Pour éviter les erreurs 404) ---
+const BASE_URL = "http://eatsmart-back.local/index.php";
 async function initV4() {
   try {
-    // 2. Appel vers ton API (Vérifie que ton PHP pointe bien vers la table 'article')
-    const response = await fetch('http://eatsmart-back.local/index.php?page=articles');
+    // Appel pour charger les articles
+    const response = await fetch(`${BASE_URL}?page=articles`);
     const articles: Article[] = await response.json();
 
     if (appDiv) {
       appDiv.innerHTML = `
         <header>
-          <h1>EatSmart - V4 (Commandes)</h1>
+          <h1>EatSmart - V4</h1>
         </header>
         <div class="content-wrapper">
           <main class="menu-container">
@@ -49,12 +50,10 @@ async function initV4() {
         </div>
       `;
 
-      // Ecouteurs pour le panier
       document.querySelectorAll('.menu-container .btn-order').forEach((btn, index) => {
         btn.addEventListener('click', () => ajouterAuPanier(articles[index]));
       });
 
-      // BESOIN N°1 : Clic sur Valider
       document.getElementById('btn-valider')?.addEventListener('click', () => {
         console.log("Bouton Valider commande cliqué");
         envoyerCommande();
@@ -66,30 +65,29 @@ async function initV4() {
 }
 
 /**
- * BESOIN N°2 & 3 : Envoi vers la table `commande`
+ * BESOIN N°2 & 3 : Envoi des données (POST)
  */
 async function envoyerCommande() {
   if (panier.length === 0) return alert("Panier vide !");
 
-  // Formatage de la date (Besoin n°2)
   const maintenant = new Date();
   const dateMySQL = maintenant.toISOString().slice(0, 19).replace('T', ' ');
-  
   const total = panier.reduce((acc, item) => acc + parseFloat(item.prix), 0);
 
   // Objet JSON (Payload) - Besoin n°2
   const commandePayload = {
-    id_commande: null, // Sera auto-incrémenté en BDD
+    id_commande: null,
     date_commande: dateMySQL,
     prix_total: total.toFixed(2),
-    etat: "en cours" // Optionnel, car présent dans ton dump
+    etat: "en cours",
+    articles: panier.map(a => a.id_article) // Optionnel : IDs pour la table assoc
   };
 
   console.log("Objet Commande (Payload) :", commandePayload);
 
-  // BESOIN N°3 : Envoi (POST)
+  // BESOIN N°3 : Envoi effectif
   try {
-    const response = await fetch('http://eatsmart-back.local/index.php?page=commandes', {
+    const response = await fetch(`${BASE_URL}?page=commandes`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(commandePayload)
@@ -99,6 +97,8 @@ async function envoyerCommande() {
       alert("Commande enregistrée avec succès !");
       panier = [];
       actualiserPanierUI();
+    } else {
+      alert("Erreur serveur lors de l'enregistrement.");
     }
   } catch (error) {
     console.error("Erreur d'envoi :", error);
