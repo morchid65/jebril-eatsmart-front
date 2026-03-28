@@ -1,26 +1,27 @@
 import './style.css'
 
+// 1. Interface alignée sur ton dump SQL
 interface Article {
   id_article: number;
   nom: string;
-  prix: string;
+  prix: string; // decimal(19,4) arrive souvent en string via JSON
   description: string;
+  id_categorie: number;
 }
 
-// Tableau pour stocker les choix de l'utilisateur (Besoin n°3)
 let panier: Article[] = [];
 const appDiv = document.querySelector<HTMLDivElement>('#app');
 
-async function initV3() {
+async function initV4() {
   try {
+    // 2. Appel vers ton API (Vérifie que ton PHP pointe bien vers la table 'article')
     const response = await fetch('http://eatsmart-back.local/index.php?page=articles');
     const articles: Article[] = await response.json();
 
     if (appDiv) {
-      // Besoin n°4 & 5 : Structure avec Header, Content-Wrapper, Menu et Aside
       appDiv.innerHTML = `
         <header>
-          <h1>EatSmart - Carte du restaurant</h1>
+          <h1>EatSmart - V4 (Commandes)</h1>
         </header>
         <div class="content-wrapper">
           <main class="menu-container">
@@ -36,62 +37,90 @@ async function initV3() {
 
           <aside class="cart-container">
               <h2>Votre Panier</h2>
-              <div id="cart-items">
-                <p>Votre panier est vide</p>
-              </div>
+              <div id="cart-items"><p>Votre panier est vide</p></div>
               <hr>
               <div class="cart-total">
                 <strong>Total : <span id="total-prix">0.00</span>€</strong>
               </div>
+              <button id="btn-valider" class="btn-order" style="margin-top:20px; background-color:#2980b9;">
+                Valider la commande
+              </button>
           </aside>
         </div>
       `;
 
-      // Besoin n°2 : Ecouteurs d'événements sur chaque bouton
-      const boutons = document.querySelectorAll('.btn-order');
-      
-      boutons.forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-          const platSelectionne = articles[index];
-          
-          // Affichage console demandé (Besoin n°2)
-          console.log(`Bouton n°${index + 1} cliqué`);
-          console.log(`Plat ajouté : ${platSelectionne.nom}`);
+      // Ecouteurs pour le panier
+      document.querySelectorAll('.menu-container .btn-order').forEach((btn, index) => {
+        btn.addEventListener('click', () => ajouterAuPanier(articles[index]));
+      });
 
-          ajouterAuPanier(platSelectionne);
-        });
+      // BESOIN N°1 : Clic sur Valider
+      document.getElementById('btn-valider')?.addEventListener('click', () => {
+        console.log("Bouton Valider commande cliqué");
+        envoyerCommande();
       });
     }
   } catch (err) {
-    console.error("Erreur V3:", err);
+    console.error("Erreur V4:", err);
   }
 }
 
 /**
- * Gère l'ajout d'un plat et la mise à jour de l'interface (Besoin n°6 & 7)
+ * BESOIN N°2 & 3 : Envoi vers la table `commande`
  */
+async function envoyerCommande() {
+  if (panier.length === 0) return alert("Panier vide !");
+
+  // Formatage de la date (Besoin n°2)
+  const maintenant = new Date();
+  const dateMySQL = maintenant.toISOString().slice(0, 19).replace('T', ' ');
+  
+  const total = panier.reduce((acc, item) => acc + parseFloat(item.prix), 0);
+
+  // Objet JSON (Payload) - Besoin n°2
+  const commandePayload = {
+    id_commande: null, // Sera auto-incrémenté en BDD
+    date_commande: dateMySQL,
+    prix_total: total.toFixed(2),
+    etat: "en cours" // Optionnel, car présent dans ton dump
+  };
+
+  console.log("Objet Commande (Payload) :", commandePayload);
+
+  // BESOIN N°3 : Envoi (POST)
+  try {
+    const response = await fetch('http://eatsmart-back.local/index.php?page=commandes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(commandePayload)
+    });
+
+    if (response.ok) {
+      alert("Commande enregistrée avec succès !");
+      panier = [];
+      actualiserPanierUI();
+    }
+  } catch (error) {
+    console.error("Erreur d'envoi :", error);
+  }
+}
+
 function ajouterAuPanier(plat: Article) {
   panier.push(plat);
+  actualiserPanierUI();
+}
 
-  // Besoin n°3 : État du panier en console
-  console.log("État du panier :", panier);
-
-  const cartItemsDiv = document.getElementById('cart-items');
+function actualiserPanierUI() {
+  const itemsDiv = document.getElementById('cart-items');
   const totalSpan = document.getElementById('total-prix');
-
-  if (cartItemsDiv && totalSpan) {
-    // Besoin n°6 : Mise à jour dynamique de la liste
-    cartItemsDiv.innerHTML = panier.map(item => `
-      <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-        <span>${item.nom}</span>
-        <span>${parseFloat(item.prix).toFixed(2)}€</span>
-      </div>
-    `).join('');
-
-    // Besoin n°7 : Calcul et affichage du total avec toFixed(2)
+  if (itemsDiv && totalSpan) {
+    itemsDiv.innerHTML = panier.length > 0 
+      ? panier.map(i => `<div>${i.nom} - ${parseFloat(i.prix).toFixed(2)}€</div>`).join('')
+      : "<p>Votre panier est vide</p>";
+    
     const total = panier.reduce((acc, item) => acc + parseFloat(item.prix), 0);
     totalSpan.innerText = total.toFixed(2);
   }
 }
 
-initV3();
+initV4();
