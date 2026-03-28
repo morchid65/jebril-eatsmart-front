@@ -1,24 +1,24 @@
-# 🍕 EatSmart - API Back-End (Historique V2-V4)
+# 🥗 EatSmart - Front-End (Historique V1-V4)
 
-Ce dépôt contient l'API REST en PHP développée avec une architecture MVC.
+Application Web moderne développée avec **Vite** et **TypeScript**.
 
 ## 📜 Historique des Versions
-* **V2 : Architecture MVC** 🏗️
-    * Mise en place de la structure `Controllers/` et `Models/`.
-    * Connexion à la base de données `jebril_eatsmart`.
-    * Première route fonctionnelle pour tester la connexion.
-* **V3 : Route Articles** 🥗
-    * Création du `ArticleModel` et `ArticleController`.
-    * Récupération dynamique des pizzas (ID, Nom, Prix, Description).
-    * Formatage de la sortie en JSON pur pour le Front-end.
-* **V4 : Gestion des Commandes & Tests** 🛒
-    * Ajout de la route `?page=commandes` (Méthode POST).
-    * Traitement du JSON entrant pour l'enregistrement des paniers.
-    * **Postman** : Ajout de scripts de tests automatisés (Status 200, JSON check).
+* **V1 : Maquette Statique** 🎨
+    * Structure HTML/CSS de base.
+    * Affichage "en dur" des premiers produits.
+* **V2 : Dynamisation TypeScript** 🛠️
+    * Mise en place des interfaces (Article, Panier).
+    * Logique de calcul du total du panier.
+* **V3 : Connexion API (Articles)** 🔌
+    * Remplacement des données statiques par un `fetch` vers l'API PHP.
+    * Génération dynamique des cartes de pizzas via `.map()`.
+* **V4 : Validation de Commande** 🚀
+    * Création de la fonction `envoyerCommande()`.
+    * Envoi du payload JSON complet (Date, Total, IDs) vers le Back-end.
 
-## 🛠️ Configuration
-- **VirtualHost** : `http://eatsmart-back.local`
-- **Dossier WAMP** : `www/projet-eatsmart-jebril/jebril-eatsmart-back/`
+## 🛠️ Installation & Run
+1. `npm install`
+2. `npm run dev` (URL : `http://localhost:5173`)
 
-## 🧪 Tests
-Importer le fichier dans `/postman` pour tester l'intégralité des routes.
+## 🔗 Liaison API
+L'application communique avec `http://eatsmart-back.local/index.php`.
