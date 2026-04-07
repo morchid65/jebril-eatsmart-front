@@ -2,7 +2,7 @@
 
 Application Web moderne développée avec **Vite** et **TypeScript**.
 
-![Schema Architecture Eatsmart](Schema Architecture Eatsmart.png)
+![Schema_Architecture_Eatsmart](Schema_Architecture_Eatsmart.png)
 
 ## 📜 Historique des Versions
 * **V1 : Maquette Statique** 🎨
