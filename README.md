@@ -2,7 +2,7 @@
 
 Application Web moderne développée avec **Vite** et **TypeScript**.
 
-![Schéma Architecture](Creation-MCD-MLD-EatSmart.PNG)
+![Schéma Architecture](Schema Architecture Eatsmart.png)
 
 ## 📜 Historique des Versions
 * **V1 : Maquette Statique** 🎨
